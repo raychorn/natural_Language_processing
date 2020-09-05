@@ -1,5 +1,6 @@
 """
 Anagram Finder. For a given string, find anagrams of the word that are valid words in a dictionary.  An anagram is reordering of the letters in a given string.  Example, if the input is “lame” and the dictionary is {“meal”, “male”, “female”, “camel”}, the output should be {“meal”, “male”}.
+Most of the samples I have reviewed for this problem use sets but this was proven to fail and so we turned to Natural Language Processing techniques.
 """
 l = ['meal', 'male', 'female', 'camel', 'mmeee']
 
