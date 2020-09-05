@@ -1,3 +1,7 @@
+"""
+This approach makes use of Natural Language Processing with a bit of Machine Learning (if I had chosen to implement this to generate the Rules).
+"""
+
 cases = []
 if (0):
     pass
