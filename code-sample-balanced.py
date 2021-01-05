@@ -1,38 +1,44 @@
 """
 This approach makes use of Natural Language Processing with a bit of Machine Learning (if I had chosen to implement this to generate the Rules).
 """
+import sys
 
 cases = []
-if (0):
-    pass
-cases.append(tuple(["()", True]))
-cases.append(tuple(["(", False]))
-cases.append(tuple([")", False]))
+if (1):
+    # 
+    cases.append(tuple(["([}{])", False]))
+    cases.append(tuple(["([{}])", True]))
+    cases.append(tuple(["[()]", True]))
+    cases.append(tuple(["[(])", False]))
+#else:
 
-cases.append(tuple(["[]", True]))
-cases.append(tuple(["[", False]))
-cases.append(tuple(["]", False]))
+    cases.append(tuple(["()", True]))
+    cases.append(tuple(["(", False]))
+    cases.append(tuple([")", False]))
 
-cases.append(tuple(["{}", True]))
-cases.append(tuple(["{", False]))
-cases.append(tuple(["}", False]))
+    cases.append(tuple(["[]", True]))
+    cases.append(tuple(["[", False]))
+    cases.append(tuple(["]", False]))
 
-cases.append(tuple(["[()]", True]))
-cases.append(tuple(["[(]", False]))
-cases.append(tuple(["[()", False]))
-cases.append(tuple(["[)]", False]))
-cases.append(tuple(["[()", False]))
-cases.append(tuple(["()]", False]))
-cases.append(tuple(["[(", False]))
-cases.append(tuple([")]", False]))
+    cases.append(tuple(["{}", True]))
+    cases.append(tuple(["{", False]))
+    cases.append(tuple(["}", False]))
 
-cases.append(tuple(["[({})]", True]))
-cases.append(tuple(["[({", False]))
-cases.append(tuple(["})]", False]))
+    cases.append(tuple(["[(]", False]))
+    cases.append(tuple(["[()", False]))
+    cases.append(tuple(["[)]", False]))
+    cases.append(tuple(["[()", False]))
+    cases.append(tuple(["()]", False]))
+    cases.append(tuple(["[(", False]))
+    cases.append(tuple([")]", False]))
 
-cases.append(tuple(["[({})({})({})({})]", True]))
+    cases.append(tuple(["[({})]", True]))
+    cases.append(tuple(["[({", False]))
+    cases.append(tuple(["})]", False]))
 
-cases.append(tuple(["[({}{}{}{})({})({})({})]()", True]))
+    cases.append(tuple(["[({})({})({})({})]", True]))
+
+    cases.append(tuple(["[({}{}{}{})({})({})({})]()", True]))
 
 __rules__ = {
     '(' : ')',
@@ -87,6 +93,7 @@ class Balancer():
         return (self.num1 > 0) and (self.__count__ == self.num1) and (len(self.tokens) == len(self.tokens2))
 
     def __init__(self, the_str, the_rules={}, the_method=0):
+        self.the_str = the_str
         self.__unmatched__ = []
         self.rules = the_rules
         self.method = the_method
@@ -95,7 +102,7 @@ class Balancer():
         
     @property
     def is_balanced(self): 
-        return self._is_balanced
+        return self._is_balanced and self.isvalid
 
     @property
     def unmatched(self): 
@@ -111,10 +118,47 @@ class Balancer():
         return list(set(self.__unmatched__))
 
 
+    @property
+    def is_matched(self):
+        """
+        Finds out how balanced an expression is.
+        With a string containing only brackets.
+
+        >>> is_matched('[]()()(((([])))')
+        False
+        >>> is_matched('[](){{{[]}}}')
+        True
+        """
+        expression = self.the_str
+        opening = tuple('({[')
+        closing = tuple(')}]')
+        mapping = dict(zip(opening, closing))
+        queue = []
+
+        for letter in expression:
+            if letter in opening:
+                queue.append(mapping[letter])
+            elif letter in closing:
+                if not queue or letter != queue.pop():
+                    return False
+        return not queue
+
+
+    @property
+    def isvalid(self):
+        s = self.the_str
+        brackets = ['{}{}'.format(k, self.rules.get(k)) for k in self.rules]
+        while any(x in s for x in brackets):
+            for br in brackets:
+                s = s.replace(br, '')
+        return not s    
+
+
 print('BEGIN: Method #1')
 results1 = []
 for c in cases:
     o = Balancer(c[0], the_rules=__rules__, the_method=0)
+    oo = Balancer(c[0], the_rules=__rules__, the_method=1)
     __is__ = o.is_balanced
     is_b = __is__ == c[-1]
     reasons = []
@@ -124,6 +168,12 @@ for c in cases:
             reasons.append('Unmatched %s' % (o.unmatched))
         the_reason = "%s" % (', '.join(reasons) if (len(reasons) > 0) else '')
     results1.append('is_balanced("%s") --> %s :: %s :: %s :: %s' % (c[0], __is__, is_b, the_reason, '' if (is_b) else "*** ERROR, Will Robinson."))
+    print('*** is_balanced -> {} {}, unmatched -> {}'.format(o.is_balanced, oo.is_balanced, oo.unmatched))
+    print('*** is_matched -> {}'.format(o.is_matched))
+    assert o.is_matched == c[-1], 'isvalid Fails.'
+    print('*** isvalid -> {}'.format(o.isvalid))
+    assert o.isvalid == c[-1], 'isvalid Fails.'
+    print('')
 print('END: Method #1')
 
 print('BEGIN: Method #2')
