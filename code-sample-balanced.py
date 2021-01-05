@@ -151,62 +151,89 @@ class Balancer():
         while any(x in s for x in brackets):
             for br in brackets:
                 s = s.replace(br, '')
+        self.__notvalid__ = s
         return not s    
 
+    @property
+    def invalid_items(self):
+        return self.__notvalid__
 
-print('BEGIN: Method #1')
-results1 = []
-for c in cases:
-    o = Balancer(c[0], the_rules=__rules__, the_method=0)
-    oo = Balancer(c[0], the_rules=__rules__, the_method=1)
-    __is__ = o.is_balanced
-    is_b = __is__ == c[-1]
-    reasons = []
-    the_reason = 'Balanced.'
-    if (not __is__):
-        if (len(o.unmatched) > 0):
-            reasons.append('Unmatched %s' % (o.unmatched))
-        the_reason = "%s" % (', '.join(reasons) if (len(reasons) > 0) else '')
-    results1.append('is_balanced("%s") --> %s :: %s :: %s :: %s' % (c[0], __is__, is_b, the_reason, '' if (is_b) else "*** ERROR, Will Robinson."))
-    print('*** is_balanced -> {} {}, unmatched -> {}'.format(o.is_balanced, oo.is_balanced, oo.unmatched))
-    print('*** is_matched -> {}'.format(o.is_matched))
-    assert o.is_matched == c[-1], 'isvalid Fails.'
-    print('*** isvalid -> {}'.format(o.isvalid))
-    assert o.isvalid == c[-1], 'isvalid Fails.'
-    print('')
-print('END: Method #1')
+    @property
+    def string(self):
+        return self.the_str
 
-print('BEGIN: Method #2')
-results2 = []
-for c in cases:
-    o = Balancer(c[0], the_rules=__rules__, the_method=1)
-    __is__ = o.is_balanced
-    is_b = __is__ == c[-1]
-    reasons = []
-    the_reason = 'Balanced.'
-    if (not __is__):
-        if (len(o.unmatched) > 0):
-            reasons.append('Unmatched %s' % (o.unmatched))
-        the_reason = "%s" % (', '.join(reasons) if (len(reasons) > 0) else '')
-    results2.append('is_balanced("%s") --> %s :: %s :: %s :: %s' % (c[0], __is__, is_b, the_reason, '' if (is_b) else "*** ERROR, Will Robinson."))
-print('END: Method #2')
-
-print('Perform Comparison of Methods.')
-if (len(results1) == len(results2)):
-    print('Both methods produced the same number of results.')
-else:
-    print('WARNING 1: Results differ for both methods.')
-
-warnings = 0
-for i in range(len(results1)):
-    if (results1[i] != results2[i]):
-        print('WARNING 2: Results differ for Line No. %s' % (i))
-        warnings += 1
+if (__name__ == '__main__'):
+    print('BEGIN: Analysis of Methods')
+    results1 = []
+    for c in cases:
+        o0 = Balancer(c[0], the_rules=__rules__, the_method=0)
+        o1 = Balancer(c[0], the_rules=__rules__, the_method=1)
         
-print('There were %s warnings.%s' % (warnings, ' So both methods are identical.' if (warnings == 0) else ' Which means both methods are NOT identical.'))
-lineno = 1
-for r in results1:
-    print('%s --> %s' % (lineno, r))
-    lineno += 1
-    
-print('Run Analysis Complete.')
+        if (not o0.isvalid):
+            print('*** the string -> {}'.format(o0.string))
+            print('*** is_balanced ({}) -> {}, unmatched -> {}'.format(o0.method, o0.is_balanced, o0.unmatched))
+            print('*** is_balanced ({}) -> {}, unmatched -> {}'.format(o1.method, o1.is_balanced, o1.unmatched))
+            print('*** is_matched -> {} {}'.format(o0.is_matched, o1.is_matched))
+            print('*** invalid_items -> {}'.format(o0.invalid_items))
+            assert o0.isvalid == c[-1], 'isvalid Fails.'
+            print('')
+    print('END: Analysis of Methods')
+
+
+    if (0):
+        print('BEGIN: Method #1')
+        results1 = []
+        for c in cases:
+            o = Balancer(c[0], the_rules=__rules__, the_method=0)
+            oo = Balancer(c[0], the_rules=__rules__, the_method=1)
+            __is__ = o.is_balanced
+            is_b = __is__ == c[-1]
+            reasons = []
+            the_reason = 'Balanced.'
+            if (not __is__):
+                if (len(o.unmatched) > 0):
+                    reasons.append('Unmatched %s' % (o.unmatched))
+                the_reason = "%s" % (', '.join(reasons) if (len(reasons) > 0) else '')
+            results1.append('is_balanced("%s") --> %s :: %s :: %s :: %s' % (c[0], __is__, is_b, the_reason, '' if (is_b) else "*** ERROR, Will Robinson."))
+            print('*** is_balanced -> {} {}, unmatched -> {}'.format(o.is_balanced, oo.is_balanced, oo.unmatched))
+            print('*** is_matched -> {}'.format(o.is_matched))
+            assert o.is_matched == c[-1], 'isvalid Fails.'
+            print('*** isvalid -> {}'.format(o.isvalid))
+            assert o.isvalid == c[-1], 'isvalid Fails.'
+            print('')
+        print('END: Method #1')
+
+        print('BEGIN: Method #2')
+        results2 = []
+        for c in cases:
+            o = Balancer(c[0], the_rules=__rules__, the_method=1)
+            __is__ = o.is_balanced
+            is_b = __is__ == c[-1]
+            reasons = []
+            the_reason = 'Balanced.'
+            if (not __is__):
+                if (len(o.unmatched) > 0):
+                    reasons.append('Unmatched %s' % (o.unmatched))
+                the_reason = "%s" % (', '.join(reasons) if (len(reasons) > 0) else '')
+            results2.append('is_balanced("%s") --> %s :: %s :: %s :: %s' % (c[0], __is__, is_b, the_reason, '' if (is_b) else "*** ERROR, Will Robinson."))
+        print('END: Method #2')
+
+        print('Perform Comparison of Methods.')
+        if (len(results1) == len(results2)):
+            print('Both methods produced the same number of results.')
+        else:
+            print('WARNING 1: Results differ for both methods.')
+
+        warnings = 0
+        for i in range(len(results1)):
+            if (results1[i] != results2[i]):
+                print('WARNING 2: Results differ for Line No. %s' % (i))
+                warnings += 1
+                
+        print('There were %s warnings.%s' % (warnings, ' So both methods are identical.' if (warnings == 0) else ' Which means both methods are NOT identical.'))
+        lineno = 1
+        for r in results1:
+            print('%s --> %s' % (lineno, r))
+            lineno += 1
+            
+        print('Run Analysis Complete.')
