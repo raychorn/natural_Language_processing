@@ -5,6 +5,8 @@ REQS=./requirements.txt
 
 ARRAY=()
 
+# \/usr\/bin\/python(?P<version>[0-9]\.[0-9])$
+
 PYTHONS=$(whereis python)
 for val in $PYTHONS; do
     if [[ $val == *"/usr/bin/"* ]]; then
@@ -25,6 +27,12 @@ done
 
 version=$($choice --version)
 echo "Use this -> $choice --> $version"
+
+v=$($choice -c 'import sys; i=sys.version_info; print("{}{}{}".format(i.major,i.minor,i.micro))')
+echo "Use this -> $choice --> $v"
+
+VENV=$VENV$v
+echo "VENV -> $VENV"
 
 if [[ -d $VENV ]]
 then
